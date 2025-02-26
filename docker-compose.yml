@@ -1,0 +1,18 @@
+version: "3.9"  
+
+services: # we define the services to run inside the docker container, currently we only have one service called our "app"
+  app:
+    build:
+      context: .
+      args:
+        DEV: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: 
+      ["sh", "-c", "python /app/manage.py runserver 0.0.0.0:8000"]
+    # THIS COMMAND IS AN AUTOMATIC ONN BUTTON THAT RUNS WEHNEVER YOU START YOUR CONTAINER
+
+
+#Your docker-compose.yml file defines how Docker should run your Django app as a service.

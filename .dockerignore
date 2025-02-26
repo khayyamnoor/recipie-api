@@ -1,0 +1,17 @@
+#list of files that will be excluded from dockerfiles, and whenever we run our docker commands
+
+
+
+.Git
+.gitignore
+.docker
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+.env/
+.venv/
+venv/ 
+
+
+#They dont need to be copied in Docker image!
