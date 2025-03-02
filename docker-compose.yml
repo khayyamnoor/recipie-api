@@ -1,6 +1,6 @@
-version: "3.9"  
 
-services: # we define the services to run inside the docker container, currently we only have one service called our "app"
+
+services:
   app:
     build:
       context: .
@@ -10,9 +10,31 @@ services: # we define the services to run inside the docker container, currently
       - "8000:8000"
     volumes:
       - ./app:/app
-    command: 
-      ["sh", "-c", "python /app/manage.py runserver 0.0.0.0:8000"]
-    # THIS COMMAND IS AN AUTOMATIC ONN BUTTON THAT RUNS WEHNEVER YOU START YOUR CONTAINER
+    command: >
+      sh -c "python /app/manage.py migrate &&
+             python /app/manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on:
+      db:
+        condition: service_healthy
 
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "devuser", "-d", "devdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5 
 
-#Your docker-compose.yml file defines how Docker should run your Django app as a service.
+volumes:
+  dev-db-data: {}  # <-- Ensure it is a valid mapping
